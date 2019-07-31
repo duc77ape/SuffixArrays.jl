@@ -22,7 +22,12 @@ function suffixsort(s)
     isempty(s) && return SA
     SA = SuffixArray(s)
     SA.n <= 1 && return SA
-    SuffixArrays.sais(s, SA.index, 0, SA.n, isascii(s) ? 256 : 65536, false)
+    if isascii(s)
+        SuffixArrays.sais(s, SA.index, 0, SA.n, 256, false)
+    else
+        SuffixArrays.sais(collect(s), SA.index, 0, SA.n, 65536, false)
+        SA.index .= collect(keys(s))[SA.index .+ eltype(SA.index)(1)] .- 1
+    end
     return SA
 end
 
