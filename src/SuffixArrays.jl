@@ -1,6 +1,7 @@
 module SuffixArrays
 
 export suffixsort
+#export findall
 
 struct SuffixArray{S<:AbstractString,N<:Signed}
     string::S
@@ -57,6 +58,26 @@ function lcp2(SA,s)
     end
     lcparr[1] = -1
     return lcparr
+end
+
+function findall(substring::AbstractString, sa::SuffixArray)
+    first = searchsortedfirst(sa.index, substring, by=(elem)->(typeof(elem) <: AbstractString ? elem : SubString(sa.string, elem+1, lastindex(sa.string))))
+
+    if !startswith(sa.string[sa.index[first]+1:end], substring)
+        return Array{UnitRange{Int},1}()
+    end
+
+    last = first
+    for index in first+1:lastindex(sa.index)
+        if !startswith(sa.string[sa.index[index]+1:end], substring)
+            break
+        else
+            last = index
+        end
+    end
+
+    len = lastindex(typeof(sa.string)(substring))
+    return [sa.index[i]+1:sa.index[i]+len for i in first:last]
 end
 
 end # module
