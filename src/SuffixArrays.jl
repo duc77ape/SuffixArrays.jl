@@ -26,7 +26,7 @@ function suffixsort(s)
     if isascii(s)
         SuffixArrays.sais(s, SA.index, 0, SA.n, 256, false)
     else
-        SuffixArrays.sais(collect(s), SA.index, 0, SA.n, 65536, false)
+        SuffixArrays.sais(collect(s), SA.index, 0, SA.n, 2^24, false)
         SA.index .= collect(keys(s))[SA.index .+ eltype(SA.index)(1)] .- 1
     end
     return SA
