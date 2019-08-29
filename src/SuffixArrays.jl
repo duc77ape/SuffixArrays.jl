@@ -63,7 +63,7 @@ end
 function findall(substring::AbstractString, sa::SuffixArray)
     first = searchsortedfirst(sa.index, substring, by=(elem)->(typeof(elem) <: AbstractString ? elem : SubString(sa.string, elem+1, lastindex(sa.string))))
 
-    if !startswith(sa.string[sa.index[first]+1:end], substring)
+    if first > length(sa.index) || !startswith(sa.string[sa.index[first]+1:end], substring)
         return Array{UnitRange{Int},1}()
     end
 
