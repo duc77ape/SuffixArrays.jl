@@ -61,23 +61,16 @@ function lcp2(SA,s)
 end
 
 function findall(substring::AbstractString, sa::SuffixArray)
-    first = searchsortedfirst(sa.index, substring, by=(elem)->(typeof(elem) <: AbstractString ? elem : SubString(sa.string, elem+1, lastindex(sa.string))))
+    len = length(typeof(sa.string)(substring))
 
-    if first > length(sa.index) || !startswith(sa.string[sa.index[first]+1:end], substring)
-        return Array{UnitRange{Int},1}()
-    end
+    r = searchsorted(sa.index, substring, by=(elem)->(typeof(elem) <: AbstractString ? elem : SubString(sa.string, elem+1, min(nextind(sa.string, elem+1, len - 1), lastindex(sa.string)))))
 
-    last = first
-    for index in first+1:lastindex(sa.index)
-        if !startswith(sa.string[sa.index[index]+1:end], substring)
-            break
-        else
-            last = index
-        end
+    if first(r) > last(r)
+         return Array{UnitRange{Int},1}()
     end
 
     len = lastindex(typeof(sa.string)(substring))
-    return [sa.index[i]+1:sa.index[i]+len for i in first:last]
+    return [sa.index[i]+1:sa.index[i]+len for i in r]
 end
 
 end # module
