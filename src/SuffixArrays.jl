@@ -11,18 +11,26 @@ end
 
 function SuffixArray(s::S) where S <: AbstractString
     n = length(s)
-    index = zeros(n <= typemax(Int8)  ? Int8  : 
-                  n <= typemax(Int16) ? Int16 : 
-                  n <= typemax(Int32) ? Int32 : Int64, n)
+    size = sizeof(s)
+
+    index = zeros(size <= typemax(Int8)  ? Int8  :
+                  size <= typemax(Int16) ? Int16 :
+                  size <= typemax(Int32) ? Int32 : Int64, n)
+
     return SuffixArray(s,n,index)
 end
 
 include("sais.jl")
 
 function suffixsort(s)
-    isempty(s) && return SA
+    if isempty(s)
+        return nothing
+    elseif length(s) <= 1
+        return SA(s, Int8(1), Int8[0])
+    end
+
     SA = SuffixArray(s)
-    SA.n <= 1 && return SA
+
     if isascii(s)
         SuffixArrays.sais(s, SA.index, 0, SA.n, 256, false)
     else
