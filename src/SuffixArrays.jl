@@ -70,15 +70,14 @@ end
 
 function findall(substring::AbstractString, sa::SuffixArray)
     len = length(typeof(sa.string)(substring))
-
     r = searchsorted(sa.index, substring, by=(elem)->(typeof(elem) <: AbstractString ? elem : SubString(sa.string, elem+1, min(nextind(sa.string, elem+1, len - 1), lastindex(sa.string)))))
 
     if first(r) > last(r)
-         return Array{UnitRange{Int},1}()
+        return Array{UnitRange{Int},1}()
     end
 
-    len = lastindex(typeof(sa.string)(substring))
-    return [sa.index[i]+1:sa.index[i]+len for i in r]
+    len_index = lastindex(typeof(sa.string)(substring))
+    return [sa.index[i]+1:sa.index[i]+len_index for i in r]
 end
 
 end # module
